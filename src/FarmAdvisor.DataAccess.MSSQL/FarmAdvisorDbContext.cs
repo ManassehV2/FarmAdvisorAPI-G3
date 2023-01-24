@@ -6,6 +6,7 @@ namespace FarmAdvisor.DataAccess.MSSQL;
 public class FarmAdvisorDbContext : DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Farm> Farms { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
