@@ -32,13 +32,13 @@ namespace FarmAdvisor.DataAccess.MSSQL
 
         public Farm? getByUserAndFarmId(Guid userId, Guid farmId)
         {
-            var farms = _dbContext.Farms.Where(farm => farm.UserId == userId).Where(farm => farm.FarmId == farmId);
+            var farms = _dbContext.Farms.Where(farm => farm.FarmId == farmId).Where(farm => farm.UserId == userId);
             return farms.FirstOrDefault();
         }
 
         public Farm? deleteByUserAndFarmId(Guid userId, Guid farmId)
         {
-            var farms = _dbContext.Farms.Where(farm => farm.UserId == userId).Where(farm => farm.FarmId == farmId);
+            var farms = _dbContext.Farms.Where(farm => farm.FarmId == farmId).Where(farm => farm.UserId == userId);
             Farm? farm = farms.FirstOrDefault();
             if (farm == null)
                 return null;
@@ -49,7 +49,7 @@ namespace FarmAdvisor.DataAccess.MSSQL
 
         public Farm? updateByUserAndFarmId(Guid userId, Guid farmId, FarmUpdate farmUpdate )
         {
-            var farms = _dbContext.Farms.Where(farm => farm.UserId == userId).Where(farm => farm.FarmId == farmId);
+            var farms = _dbContext.Farms.Where(farm => farm.FarmId == farmId).Where(farm => farm.UserId == userId);
             Farm? farm = farms.FirstOrDefault();
             if (farm == null)
                 return null;
