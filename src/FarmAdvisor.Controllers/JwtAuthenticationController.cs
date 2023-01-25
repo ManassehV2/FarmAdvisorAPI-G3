@@ -49,13 +49,13 @@ namespace FarmAdvisor.Controllers
             return userLogin;
         }
         
-        public string? getCurrentUserId(HttpContext httpContext)
+        public Guid? getCurrentUserId(HttpContext httpContext)
         {
             var identity = httpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
             {
                 var userClaims = identity.Claims;
-                return userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value;
+                return new Guid(userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value!);
             }
             return null;
         }

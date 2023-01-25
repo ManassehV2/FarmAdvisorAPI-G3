@@ -17,9 +17,9 @@ namespace FarmAdvisor.DataAccess.MSSQL
             return user;
         }
 
-        public User? getById(string userId)
+        public User? getById(Guid userId)
         {
-            var users = _dbContext.Users.Where(user => user.UserId.ToString() == userId);
+            var users = _dbContext.Users.Where(user => user.UserId == userId);
             return users.FirstOrDefault();
         }
 
