@@ -1,3 +1,4 @@
+using FarmAdvisor.Commons;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FarmAdvisor.Models;
@@ -26,6 +27,10 @@ namespace FarmAdvisor.Controllers
         {
             try
             {
+                if (!Utils.isValidLatitude(sensorInput.Lat))
+                    return Ok("Invalid_Latitude");
+                if (!Utils.isValidLongitude(sensorInput.Long))
+                    return Ok("Invalid_Longitude");
                 Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
                 if (userId == null)
                 {
