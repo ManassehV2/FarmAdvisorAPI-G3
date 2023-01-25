@@ -1,32 +1,28 @@
-using FarmAdvisor.Commons;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FarmAdvisor.Models;
 using FarmAdvisor.DataAccess.MSSQL;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace FarmAdvisor.Controllers
 {
     [ApiController]
     [Authorize]
     [Route("farms")]
-    public class FarmController : ControllerBase
+    public class FarmsController : ControllerBase
     {
 
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly FarmDataAccess farmDataAccess;
-        public FarmController(JwtAuthenticationController jwtAuthenticationController)
+        private readonly FieldDataAccess fieldDataAccess;
+        public FarmsController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.farmDataAccess = new FarmDataAccess();
+            this.fieldDataAccess = new FieldDataAccess();
         }
 
         [HttpPost]
-        public IActionResult addFarm([FromBody] Farm farm)
+        public IActionResult postFarm([FromBody] Farm farm)
         {
             try
             {
@@ -96,7 +92,7 @@ namespace FarmAdvisor.Controllers
 
         [HttpPatch]
         [Route("{farmId?}")]
-        public IActionResult deleteFarm(Guid farmId, FarmUpdate farmUpdates)
+        public IActionResult patchFarm(Guid farmId, FarmUpdate farmUpdates)
         {
             try
             {
@@ -136,6 +132,27 @@ namespace FarmAdvisor.Controllers
                     return NotFound("Farm_Not_Found");
                 }
                 return Ok(farm);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("{farmId?}/fields")]
+        public IActionResult getFields(Guid farmId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Field[]? fields = fieldDataAccess.getByFarmId(farmId);
+                return Ok(fields);
             }
             catch (Exception e)
             {
