@@ -13,12 +13,12 @@ namespace FarmAdvisor.Controllers
 {
     [ApiController]
     [Route("users")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
 
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly UserDataAccess userDataAccess;
-        public UsersController(JwtAuthenticationController jwtAuthenticationController)
+        public UserController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.userDataAccess = new UserDataAccess();

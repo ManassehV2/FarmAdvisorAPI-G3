@@ -45,39 +45,12 @@ namespace FarmAdvisor.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UserId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("FarmId");
 
                     b.ToTable("Farms");
-                });
-
-            modelBuilder.Entity("FarmAdvisor.Models.Field", b =>
-                {
-                    b.Property<Guid?>("FieldId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Altitude")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("FarmId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Polygon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FieldId");
-
-                    b.ToTable("Fields");
                 });
 
             modelBuilder.Entity("FarmAdvisor.Models.User", b =>
