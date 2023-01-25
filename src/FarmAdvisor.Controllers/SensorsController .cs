@@ -7,24 +7,22 @@ namespace FarmAdvisor.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("fields")]
-    public class FieldsController : ControllerBase
+    [Route("sensors")]
+    public class SensorsController : ControllerBase
     {
 
         private readonly JwtAuthenticationController jwtAuthenticationController;
-        private readonly FieldDataAccess fieldDataAccess;
-        private readonly FarmDataAccess farmDataAccess;
         private readonly SensorDataAccess sensorDataAccess;
-        public FieldsController(JwtAuthenticationController jwtAuthenticationController)
+        private readonly FieldDataAccess fieldDataAccess;
+        public SensorsController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
-            this.fieldDataAccess = new FieldDataAccess();
-            this.farmDataAccess = new FarmDataAccess();
             this.sensorDataAccess = new SensorDataAccess();
+            this.fieldDataAccess = new FieldDataAccess();
         }
 
         [HttpPost]
-        public IActionResult postField([FromBody] Field field)
+        public IActionResult postSensor([FromBody] SensorInput sensorInput)
         {
             try
             {
@@ -33,12 +31,24 @@ namespace FarmAdvisor.Controllers
                 {
                     return NotFound("User_Not_Found");
                 }
-                Farm? farm = farmDataAccess.getByUserAndFarmId((Guid)userId, field.FarmId);
-                if (farm == null)
-                    return NotFound("Farm_Not_Found");
-                field.UserId = userId;
-                field = fieldDataAccess.add(field);
-                return Ok(field);
+                Field? field = fieldDataAccess.getByUserAndFieldId((Guid)userId, sensorInput.FieldId);
+                if (field == null)
+                    return NotFound("Field_Not_Found");
+                Sensor sensor = new Sensor()
+                {
+                    FieldId = sensorInput.FieldId,
+                    SerialNo = sensorInput.SerialNo,
+                    GDD = sensorInput.GDD,
+                    DefaultGDD = sensorInput.DefaultGDD,
+                    Long = sensorInput.Long,
+                    Lat = sensorInput.Lat,
+                    InstallationDate = sensorInput.InstallationDate,
+                    LastCuttingDate = sensorInput.LastCuttingDate,
+                    BaseTemperature = sensorInput.BaseTemperature,
+                    UserId = userId
+                };
+                sensorDataAccess.add(sensor);
+                return Ok(sensor);
             }
             catch (Exception e)
             {
@@ -48,8 +58,8 @@ namespace FarmAdvisor.Controllers
         }
 
         [HttpGet]
-        [Route("{fieldId?}")]
-        public IActionResult getField(Guid fieldId)
+        [Route("{sensorId?}")]
+        public IActionResult getSensor(Guid sensorId)
         {
             try
             {
@@ -58,12 +68,12 @@ namespace FarmAdvisor.Controllers
                 {
                     return NotFound("User_Not_Found");
                 }
-                Field? field = fieldDataAccess.getByUserAndFieldId((Guid)userId, fieldId);
-                if (field == null)
+                Sensor? sensor = sensorDataAccess.getByUserAndSensorId((Guid)userId, sensorId);
+                if (sensor == null)
                 {
-                    return NotFound("Field_Not_Found");
+                    return NotFound("Sensor_Not_Found");
                 }
-                return Ok(field);
+                return Ok(sensor);
             }
             catch (Exception e)
             {
@@ -73,8 +83,8 @@ namespace FarmAdvisor.Controllers
         }
 
         [HttpPatch]
-        [Route("{fieldId?}")]
-        public IActionResult patchField(Guid fieldId, FieldUpdate fieldUpdates)
+        [Route("{sensorId?}")]
+        public IActionResult patchSensor(Guid sensorId, SensorUpdate sensorUpdates)
         {
             try
             {
@@ -83,12 +93,12 @@ namespace FarmAdvisor.Controllers
                 {
                     return NotFound("User_Not_Found");
                 }
-                Field? field = fieldDataAccess.updateByUserAndFieldId((Guid)userId, fieldId, fieldUpdates);
-                if (field == null)
+                Sensor? sensor = sensorDataAccess.updateByUserAndSensorId((Guid)userId, sensorId, sensorUpdates);
+                if (sensor == null)
                 {
-                    return NotFound("Field_Not_Found");
+                    return NotFound("Sensor_Not_Found");
                 }
-                return Ok(field);
+                return Ok(sensor);
             }
             catch (Exception e)
             {
@@ -98,8 +108,8 @@ namespace FarmAdvisor.Controllers
         }
 
         [HttpDelete]
-        [Route("{fieldId?}")]
-        public IActionResult deleteField(Guid fieldId)
+        [Route("{sensorId?}")]
+        public IActionResult deleteSensor(Guid sensorId)
         {
             try
             {
@@ -108,32 +118,12 @@ namespace FarmAdvisor.Controllers
                 {
                     return NotFound("User_Not_Found");
                 }
-                Field? field = fieldDataAccess.deleteByUserAndFieldId((Guid)userId, fieldId);
-                if (field == null)
+                Sensor? sensor = sensorDataAccess.deleteByUserAndSensorId((Guid)userId, sensorId);
+                if (sensor == null)
                 {
-                    return NotFound("Field_Not_Found");
+                    return NotFound("Sensor_Not_Found");
                 }
-                return Ok(field);
-            }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
-        }
-        [HttpGet]
-        [Route("{fieldId?}/sensors")]
-        public IActionResult getSensors(Guid fieldId)
-        {
-            try
-            {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Sensor[]? sensors = sensorDataAccess.getByFieldId(fieldId);
-                return Ok(sensors);
+                return Ok(sensor);
             }
             catch (Exception e)
             {

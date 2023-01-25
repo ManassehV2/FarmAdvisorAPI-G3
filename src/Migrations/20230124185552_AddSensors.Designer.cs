@@ -4,6 +4,7 @@ using FarmAdvisor.DataAccess.MSSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FarmAdvisor.Migrations
 {
     [DbContext(typeof(FarmAdvisorDbContext))]
-    partial class FarmAdvisorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230124185552_AddSensors")]
+    partial class AddSensors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
