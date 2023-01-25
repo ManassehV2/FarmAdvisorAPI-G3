@@ -141,10 +141,10 @@ namespace FarmAdvisor.Controllers
         {
             try
             {
-                string? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
                 if (userId != null)
                 {
-                    User? user = userDataAccess.getById(userId);
+                    User? user = userDataAccess.getById((Guid)userId);
                     if (user != null)
                     {
                         user.PasswordHash = null;

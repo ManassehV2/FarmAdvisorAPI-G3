@@ -26,17 +26,115 @@ namespace FarmAdvisor.Controllers
         }
 
         [HttpPost]
-        [Route("")]
         public IActionResult addFarm([FromBody] Farm farm)
         {
             try
             {
-                string? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if(String.IsNullOrEmpty(userId)){
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
                     return NotFound("User_Not_Found");
                 }
-                farm.UserId = new Guid(userId);
+                farm.UserId = userId;
                 farm = farmDataAccess.add(farm);
+                return Ok(farm);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult getFarms()
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                else
+                {
+                    Farm[] farms = farmDataAccess.getByUserId((Guid)userId);
+                    return Ok(farms);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("{farmId?}")]
+        public IActionResult getFarm(Guid farmId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Farm? farm = farmDataAccess.getByUserAndFarmId((Guid)userId, farmId);
+                if (farm == null)
+                {
+                    return NotFound("Farm_Not_Found");
+                }
+                return Ok(farm);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPatch]
+        [Route("{farmId?}")]
+        public IActionResult deleteFarm(Guid farmId, FarmUpdate farmUpdates)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Farm? farm = farmDataAccess.updateByUserAndFarmId((Guid)userId, farmId, farmUpdates);
+                if (farm == null)
+                {
+                    return NotFound("Farm_Not_Found");
+                }
+                return Ok(farm);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{farmId?}")]
+        public IActionResult deleteFarm(Guid farmId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Farm? farm = farmDataAccess.deleteByUserAndFarmId((Guid)userId, farmId);
+                if (farm == null)
+                {
+                    return NotFound("Farm_Not_Found");
+                }
                 return Ok(farm);
             }
             catch (Exception e)
