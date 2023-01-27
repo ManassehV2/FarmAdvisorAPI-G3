@@ -14,11 +14,13 @@ namespace FarmAdvisor.Controllers
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly FieldDataAccess fieldDataAccess;
         private readonly FarmDataAccess farmDataAccess;
+        private readonly SensorDataAccess sensorDataAccess;
         public FieldsController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.fieldDataAccess = new FieldDataAccess();
             this.farmDataAccess = new FarmDataAccess();
+            this.sensorDataAccess = new SensorDataAccess();
         }
 
         [HttpPost]
@@ -112,6 +114,26 @@ namespace FarmAdvisor.Controllers
                     return NotFound("Field_Not_Found");
                 }
                 return Ok(field);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+        [HttpGet]
+        [Route("{fieldId?}/sensors")]
+        public IActionResult getSensors(Guid fieldId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Sensor[]? sensors = sensorDataAccess.getByFieldId(fieldId);
+                return Ok(sensors);
             }
             catch (Exception e)
             {

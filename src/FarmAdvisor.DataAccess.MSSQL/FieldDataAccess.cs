@@ -4,8 +4,7 @@ namespace FarmAdvisor.DataAccess.MSSQL
 {
     public class FieldDataAccess
     {
-        //key declaration
-        private FarmAdvisorDbContext _dbContext;
+        private readonly FarmAdvisorDbContext _dbContext;
         public FieldDataAccess()
         {
             _dbContext = new FarmAdvisorDbContext();

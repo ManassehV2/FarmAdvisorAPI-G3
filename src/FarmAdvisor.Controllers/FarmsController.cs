@@ -14,11 +14,13 @@ namespace FarmAdvisor.Controllers
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly FarmDataAccess farmDataAccess;
         private readonly FieldDataAccess fieldDataAccess;
+        private readonly SensorDataAccess sensorDataAccess;
         public FarmsController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.farmDataAccess = new FarmDataAccess();
             this.fieldDataAccess = new FieldDataAccess();
+            this.sensorDataAccess = new SensorDataAccess();
         }
 
         [HttpPost]
@@ -153,6 +155,57 @@ namespace FarmAdvisor.Controllers
                 }
                 Field[]? fields = fieldDataAccess.getByFarmId(farmId);
                 return Ok(fields);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("{farmId?}/notifications")]
+        public IActionResult getNotifications(Guid farmId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Field[]? fields = fieldDataAccess.getByFarmId(farmId);
+                List<FarmNotification> notifications = new List<FarmNotification>();
+                foreach (Field field in fields)
+                {
+                    Sensor[]? sensors = sensorDataAccess.getByFieldId((Guid)field.FieldId!);
+                    foreach (Sensor sensor in sensors)
+                    {
+                        if (sensor.BatteryStatus == false)
+                        {
+                            notifications.Add(new FarmNotification()
+                            {
+                                FieldId = (Guid)field.FieldId,
+                                FieldName = field.Name,
+                                SensorId = (Guid)sensor.SensorId!,
+                                SensorSerialNo = sensor.SerialNo,
+                                Type = FarmNotification.notificationType.LowBattery
+                            });
+                        }
+                        if (sensor.GDD > sensor.DefaultGDD)
+                        {
+                            notifications.Add(new FarmNotification()
+                            {
+                                FieldId = (Guid)field.FieldId,
+                                FieldName = field.Name,
+                                SensorId = (Guid)sensor.SensorId!,
+                                SensorSerialNo = sensor.SerialNo,
+                                Type = FarmNotification.notificationType.GddExceeded
+                            });
+                        }
+                    }
+                }
+                return Ok(notifications);
             }
             catch (Exception e)
             {
