@@ -7,7 +7,7 @@ namespace FarmAdvisor.Models
         public Guid FieldId { get; set; }
         [Required]
         public string SerialNo { get; set; } = null!;
-        public int GDD { get; set; }
+        public double GDD { get; set; }
         public int DefaultGDD { get; set; }
         public double Long { get; set; }
         public double Lat { get; set; }

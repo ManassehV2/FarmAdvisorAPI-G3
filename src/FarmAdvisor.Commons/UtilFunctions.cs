@@ -26,4 +26,17 @@ public static class Utils
     {
         return ((tMin + tMax) / 2) - tBase;
     }
+    public static double[] getIncPattern(List<double> list)
+    {
+        int incPatternLength = list.Count -1;
+        double[] dt = new double[incPatternLength];
+        int minus = (int)Math.Floor((double)incPatternLength / 2);
+        int plus = (int)Math.Ceiling((double)incPatternLength / 2);
+        for (int index = 0; index < list.Count - 1; index++)
+        {
+            int newIndex = index < minus ? index + plus : index - minus;
+            dt[newIndex] = list[index + 1] - list[index];
+        }
+        return dt;
+    }
 }

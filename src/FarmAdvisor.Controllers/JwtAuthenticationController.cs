@@ -32,7 +32,7 @@ namespace FarmAdvisor.Controllers
                 {
                     new Claim(ClaimTypes.Actor, user.UserId.ToString()!),
                 }),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddDays(5),
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),

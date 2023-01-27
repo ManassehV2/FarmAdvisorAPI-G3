@@ -60,7 +60,7 @@ namespace FarmAdvisor.Services.WeatherApi
 
             client.DefaultRequestHeaders.Add("User-Agent", "C# program");
         }
-        public async Task<List<OneDayWeatherForecast>> getForecastAsync(int altitude, double latitude, double longitude, double baseTemperature)
+        public async Task<List<OneDayWeatherForecast>> getForecastAsync(int altitude, double latitude, double longitude, double baseTemperature, double currentGdd)
         {
             string forecastApiResponseJson = await client.GetStringAsync(" https://api.met.no/weatherapi/locationforecast/2.0/compact?altitude=" + altitude + "&lat=" + latitude + "&lon=" + longitude);
             ForecastApiResponse forecastApiResponse = JsonConvert.DeserializeObject<ForecastApiResponse>(forecastApiResponseJson)!;
@@ -69,6 +69,7 @@ namespace FarmAdvisor.Services.WeatherApi
             int index = 0;
             double temperatureSum = 0;
             double precipitationSum = 0;
+            double gdd = currentGdd;
             double tMin = forecastApiResponse.properties.timeseries[0].data.instant.details.air_temperature;
             double tMax = tMin;
             int timesCount = 0;
@@ -78,12 +79,15 @@ namespace FarmAdvisor.Services.WeatherApi
                 double thisTemperature = timeSeriesMember.data.instant.details.air_temperature;
                 if (thisDate != lastDate)
                 {
+                    double thisGdd = Utils.getGdd(tMin, tMax, baseTemperature);
+                    if (thisGdd > 0)
+                        gdd += thisGdd;
                     forecasts.Add(new OneDayWeatherForecast()
                     {
                         Date = lastDate,
                         averageTemperature = temperatureSum / timesCount,
                         averagePrecipitation = precipitationSum / timesCount,
-                        GDD = Utils.getGdd(tMin, tMax, baseTemperature)
+                        GDD = gdd
                     });
                     index++;
                     if (index == 8)

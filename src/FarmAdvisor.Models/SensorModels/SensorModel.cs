@@ -10,5 +10,6 @@ namespace FarmAdvisor.Models
         public Guid? UserId { get; set; }
         public bool BatteryStatus { get; set; } = true;
         public string LastCommunication { get; set; } = "0";
+        public DateTime? cuttingDate { get; set; }
     }
 }
