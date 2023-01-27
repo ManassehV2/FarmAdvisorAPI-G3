@@ -4,7 +4,6 @@ namespace FarmAdvisor.DataAccess.MSSQL
 {
     public class SensorDataAccess
     {
-        //key declaration
         private readonly FarmAdvisorDbContext _dbContext;
         public SensorDataAccess()
         {
@@ -33,6 +32,12 @@ namespace FarmAdvisor.DataAccess.MSSQL
         public Sensor? getByUserAndSensorId(Guid userId, Guid sensorId)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SensorId == sensorId).Where(sensor => sensor.UserId == userId);
+            return sensors.FirstOrDefault();
+        }
+
+        public Sensor? getByUserIdAndSerialNo(Guid userId, string serialNo)
+        {
+            var sensors = _dbContext.Sensors.Where(sensor => sensor.SerialNo == serialNo).Where(sensor => sensor.UserId == userId);
             return sensors.FirstOrDefault();
         }
 

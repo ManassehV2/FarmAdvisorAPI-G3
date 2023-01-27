@@ -14,7 +14,7 @@ namespace FarmAdvisor.Controllers
 
         [HttpGet]
         [Route("forecast")]
-        public async Task<IActionResult> getForecastAsync([FromQuery] int altitude, double latitude, double longitude, double baseTemperature)
+        public async Task<IActionResult> getForecastAsync([FromQuery] int altitude, double latitude, double longitude, double baseTemperature, double currentGdd)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace FarmAdvisor.Controllers
                     altitude = -500;
                 if (altitude > 9000)
                     altitude = 9000;
-                List<OneDayWeatherForecast> forecasts = await weatherForecastService.getForecastAsync(altitude, latitude, longitude, baseTemperature);
+                List<OneDayWeatherForecast> forecasts = await weatherForecastService.getForecastAsync(altitude, latitude, longitude, baseTemperature, currentGdd);
                 return Ok(forecasts);
             }
             catch (Exception e)
