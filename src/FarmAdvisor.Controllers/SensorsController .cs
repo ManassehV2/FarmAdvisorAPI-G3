@@ -16,6 +16,7 @@ namespace FarmAdvisor.Controllers
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly SensorDataAccess sensorDataAccess = new SensorDataAccess();
         private readonly SensorStatisticsDataAccess sensorStatisticsDataAccess = new SensorStatisticsDataAccess();
+        private readonly SensorGddResetDataAccess sensorGddResetDataAccess = new SensorGddResetDataAccess();
         private readonly FieldDataAccess fieldDataAccess = new FieldDataAccess();
         private readonly WeatherForecastService weatherForecastService = new WeatherForecastService();
         public SensorsController(JwtAuthenticationController jwtAuthenticationController)
@@ -213,6 +214,66 @@ namespace FarmAdvisor.Controllers
                 }
                 SensorStatistic[] sensorStatistic = sensorStatisticsDataAccess.getBySensorId(sensorId)!;
                 return Ok(sensorStatistic);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Route("{sensorId?}/gdd-resets")]
+        public IActionResult resetGdd(Guid sensorId, [FromBody] SensorGddResetInput sensorGddResetInput)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Sensor? sensor = sensorDataAccess.getByUserAndSensorId((Guid)userId, sensorId);
+                if (sensor == null)
+                {
+                    return NotFound("Sensor_Not_Found");
+                }
+                SensorStatistic sensorStatistic = sensorStatisticsDataAccess.getBySensorIdAndDate(sensorId, sensorGddResetInput.resetDate)!;
+                if (sensorStatistic == null)
+                    return NotFound("Date_Not_Found");
+                sensor = sensorDataAccess.updateByUserAndSensorId((Guid)userId, sensorId, new SensorUpdate() { GDD = sensorStatistic.GDD });
+                SensorGddReset sensorGddReset = sensorGddResetDataAccess.add(new SensorGddReset()
+                {
+                    SensorId = (Guid)sensor!.SensorId!,
+                    resetDate = sensorGddResetInput.resetDate
+                });
+                return Ok(sensorGddReset);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("{sensorId?}/gdd-resets")]
+        public IActionResult getGddResets(Guid sensorId)
+        {
+            try
+            {
+                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+                if (userId == null)
+                {
+                    return NotFound("User_Not_Found");
+                }
+                Sensor? sensor = sensorDataAccess.getByUserAndSensorId((Guid)userId, sensorId);
+                if (sensor == null)
+                {
+                    return NotFound("Sensor_Not_Found");
+                }
+                SensorGddReset[] sensorGddResets = sensorGddResetDataAccess.getBySensorId((Guid)sensor.SensorId!);
+                return Ok(sensorGddResets);
             }
             catch (Exception e)
             {
