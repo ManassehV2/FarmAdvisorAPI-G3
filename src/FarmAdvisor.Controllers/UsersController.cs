@@ -13,12 +13,12 @@ namespace FarmAdvisor.Controllers
 {
     [ApiController]
     [Route("users")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
 
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly UserDataAccess userDataAccess;
-        public UserController(JwtAuthenticationController jwtAuthenticationController)
+        public UsersController(JwtAuthenticationController jwtAuthenticationController)
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.userDataAccess = new UserDataAccess();
@@ -122,6 +122,10 @@ namespace FarmAdvisor.Controllers
         {
             try
             {
+                if (!Utils.isValidPhone(userLoginInput.phone))
+                {
+                    return BadRequest("Invalid_Phone");
+                }
                 UserLogin? userLogin = jwtAuthenticationController.Authenticate(userLoginInput.phone, userLoginInput.passwordHash);
                 if (userLogin == null)
                     return Unauthorized();
