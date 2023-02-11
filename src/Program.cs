@@ -2,6 +2,8 @@ using FarmAdvisor.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FarmAdvisor.DataAccess.MSSQL;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,14 +18,14 @@ builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer( x =>
+}).AddJwtBearer(x =>
 {
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Token"])),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Token"]!)),
         ValidateIssuer = false,
         ValidateAudience = false
     };
@@ -33,12 +35,8 @@ builder.Services.AddSingleton<JwtAuthenticationController>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -47,5 +45,24 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// FarmAdvisorDbContext farmAdvisorDbContext = new FarmAdvisorDbContext();
+// while (true)
+// {
+//     try
+//     {
+//         if (farmAdvisorDbContext.Database.GetPendingMigrations().Any())
+//         {
+//             Console.WriteLine("Populating db!");
+//             farmAdvisorDbContext.Database.Migrate();
+//             break;
+//         }
+//     }
+//     catch (Exception e)
+//     {
+//         Console.WriteLine(e);
+//         Console.WriteLine("Waiting the db...");
+//     }
+// }
 
 app.Run();
