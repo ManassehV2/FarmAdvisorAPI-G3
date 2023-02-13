@@ -28,4 +28,4 @@ dotnet run
 
 ### Notes
 
--> The SignUp end point does't send any Verification code to the phone provided, Use 12345 instead
+-> The SignUp end point does't send any Verification code to the phone provided, Use 123456 instead
