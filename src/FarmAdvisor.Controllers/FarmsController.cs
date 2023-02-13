@@ -181,7 +181,7 @@ namespace FarmAdvisor.Controllers
                     Sensor[]? sensors = sensorDataAccess.getByFieldId((Guid)field.FieldId!);
                     foreach (Sensor sensor in sensors)
                     {
-                        if (sensor.BatteryStatus == false)
+                        if (!sensor.BatteryStatus)
                         {
                             notifications.Add(new FarmNotification()
                             {
@@ -189,7 +189,7 @@ namespace FarmAdvisor.Controllers
                                 FieldName = field.Name,
                                 SensorId = (Guid)sensor.SensorId!,
                                 SensorSerialNo = sensor.SerialNo,
-                                Type = FarmNotification.notificationType.LowBattery
+                                Type = FarmNotification.NotificationType.LowBattery
                             });
                         }
                         if (sensor.GDD > sensor.DefaultGDD)
@@ -200,7 +200,7 @@ namespace FarmAdvisor.Controllers
                                 FieldName = field.Name,
                                 SensorId = (Guid)sensor.SensorId!,
                                 SensorSerialNo = sensor.SerialNo,
-                                Type = FarmNotification.notificationType.GddExceeded
+                                Type = FarmNotification.NotificationType.GddExceeded
                             });
                         }
                     }
