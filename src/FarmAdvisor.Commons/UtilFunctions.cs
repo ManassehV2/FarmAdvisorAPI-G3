@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 namespace FarmAdvisor.Commons;
 public static class Utils
 {
-
     public static bool isValidPhone(string phone)
     {
         if (phone != null) return Regex.IsMatch(phone, @"^([\+]?251[-]?|[0])?[1-9][0-9]{8}$", RegexOptions.None, TimeSpan.FromMilliseconds(5000));
@@ -20,6 +19,7 @@ public static class Utils
     }
     public static bool isValidLongitude(double number)
     {
+        // LoadTester.test();
         return number >= -180 && number <= 180;
     }
     public static double getGdd(double tMin, double tMax, double tBase)

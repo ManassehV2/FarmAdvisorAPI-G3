@@ -2,7 +2,7 @@ namespace FarmAdvisor.Models
 {
     public class FarmNotification
     {
-        public static class notificationType
+        public static class NotificationType
         {
             public static readonly string LowBattery = "LowBattery";
             public static readonly string GddExceeded = "GddExceeded";
