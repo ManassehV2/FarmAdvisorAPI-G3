@@ -1,17 +1,14 @@
 using Newtonsoft.Json;
 using FarmAdvisor.Models;
 using FarmAdvisor.Commons;
-
 namespace FarmAdvisor.Services.WeatherApi
 {
-
     public class ForecastApiResponse
     {
         public class Properties
         {
             public class TimeSeriesMember
             {
-
                 public class TimeSeriesMemberData
                 {
                     public class TimeSeriesMemberDataInstant
@@ -57,7 +54,6 @@ namespace FarmAdvisor.Services.WeatherApi
         private readonly HttpClient client = new HttpClient();
         public WeatherForecastService()
         {
-
             client.DefaultRequestHeaders.Add("User-Agent", "C# program");
         }
         public async Task<List<OneDayWeatherForecast>> getForecastAsync(int altitude, double latitude, double longitude, double baseTemperature, double currentGdd)

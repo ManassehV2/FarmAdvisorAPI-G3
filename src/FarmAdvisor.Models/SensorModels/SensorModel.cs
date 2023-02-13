@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace FarmAdvisor.Models
 {
     public class Sensor : SensorInput

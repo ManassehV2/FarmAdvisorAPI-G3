@@ -4,20 +4,17 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using FarmAdvisor.DataAccess.MSSQL;
 using FarmAdvisor.Models;
-
 namespace FarmAdvisor.Controllers
 {
     public class JwtAuthenticationController
     {
         private readonly IConfiguration _configuration;
         private readonly UserDataAccess userDataAccess;
-
         public JwtAuthenticationController(IConfiguration configuration)
         {
             this.userDataAccess = new UserDataAccess();
             _configuration = configuration;
         }
-
         public UserLogin? Authenticate(string phone, string passwordHash)
         {
             User? user = userDataAccess.getByCredentials(phone, passwordHash);
@@ -33,7 +30,6 @@ namespace FarmAdvisor.Controllers
                     new Claim(ClaimTypes.Actor, user.UserId.ToString()!),
                 }),
                 Expires = DateTime.UtcNow.AddDays(100),
-
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),
                     SecurityAlgorithms.HmacSha256Signature)

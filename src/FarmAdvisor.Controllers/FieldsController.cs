@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FarmAdvisor.Models;
 using FarmAdvisor.DataAccess.MSSQL;
-
 namespace FarmAdvisor.Controllers
 {
     [ApiController]
@@ -10,7 +9,6 @@ namespace FarmAdvisor.Controllers
     [Route("fields")]
     public class FieldsController : ControllerBase
     {
-
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly FieldDataAccess fieldDataAccess;
         private readonly FarmDataAccess farmDataAccess;
@@ -22,124 +20,60 @@ namespace FarmAdvisor.Controllers
             this.farmDataAccess = new FarmDataAccess();
             this.sensorDataAccess = new SensorDataAccess();
         }
-
         [HttpPost]
         public IActionResult postField([FromBody] Field field)
         {
-            try
-            {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Farm? farm = farmDataAccess.getByUserAndFarmId((Guid)userId, field.FarmId);
-                if (farm == null)
-                    return NotFound("Farm_Not_Found");
-                field.UserId = userId;
-                field = fieldDataAccess.add(field);
-                return Ok(field);
-            }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
+            Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+            Farm? farm = farmDataAccess.getByUserAndFarmId((Guid)userId!, field.FarmId);
+            if (farm == null)
+                return NotFound("Farm_Not_Found");
+            field.UserId = userId;
+            field = fieldDataAccess.add(field);
+            return Ok(field);
         }
-
         [HttpGet]
         [Route("{fieldId?}")]
         public IActionResult getField(Guid fieldId)
         {
-            try
+            Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+            Field? field = fieldDataAccess.getByUserAndFieldId((Guid)userId!, fieldId);
+            if (field == null)
             {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Field? field = fieldDataAccess.getByUserAndFieldId((Guid)userId, fieldId);
-                if (field == null)
-                {
-                    return NotFound("Field_Not_Found");
-                }
-                return Ok(field);
+                return NotFound("Field_Not_Found");
             }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
-        }
+            return Ok(field);
 
+        }
         [HttpPatch]
         [Route("{fieldId?}")]
         public IActionResult patchField(Guid fieldId, FieldUpdate fieldUpdates)
         {
-            try
+            Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+            Field? field = fieldDataAccess.updateByUserAndFieldId((Guid)userId!, fieldId, fieldUpdates);
+            if (field == null)
             {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Field? field = fieldDataAccess.updateByUserAndFieldId((Guid)userId, fieldId, fieldUpdates);
-                if (field == null)
-                {
-                    return NotFound("Field_Not_Found");
-                }
-                return Ok(field);
+                return NotFound("Field_Not_Found");
             }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
+            return Ok(field);
         }
-
         [HttpDelete]
         [Route("{fieldId?}")]
         public IActionResult deleteField(Guid fieldId)
         {
-            try
+            Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
+            Field? field = fieldDataAccess.deleteByUserAndFieldId((Guid)userId!, fieldId);
+            if (field == null)
             {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Field? field = fieldDataAccess.deleteByUserAndFieldId((Guid)userId, fieldId);
-                if (field == null)
-                {
-                    return NotFound("Field_Not_Found");
-                }
-                return Ok(field);
+                return NotFound("Field_Not_Found");
             }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
+            return Ok(field);
         }
         [HttpGet]
         [Route("{fieldId?}/sensors")]
         public IActionResult getSensors(Guid fieldId)
         {
-            try
-            {
-                Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
-                if (userId == null)
-                {
-                    return NotFound("User_Not_Found");
-                }
-                Sensor[]? sensors = sensorDataAccess.getByFieldId(fieldId);
-                return Ok(sensors);
-            }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return StatusCode(500);
-            }
+            Sensor[]? sensors = sensorDataAccess.getByFieldId(fieldId);
+            return Ok(sensors);
         }
     }
 }

@@ -2,7 +2,6 @@ using FarmAdvisor.Commons;
 using Microsoft.AspNetCore.Mvc;
 using FarmAdvisor.Services.WeatherApi;
 using FarmAdvisor.Models;
-
 namespace FarmAdvisor.Controllers
 {
     [ApiController]
@@ -11,7 +10,6 @@ namespace FarmAdvisor.Controllers
     public class WeatherForecastController : ControllerBase
     {
         private readonly WeatherForecastService weatherForecastService = new WeatherForecastService();
-
         [HttpGet]
         [Route("forecast")]
         public async Task<IActionResult> getForecastAsync([FromQuery] int altitude, double latitude, double longitude, double baseTemperature, double currentGdd)
@@ -35,6 +33,5 @@ namespace FarmAdvisor.Controllers
                 return StatusCode(500);
             }
         }
-
     }
 }

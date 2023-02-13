@@ -8,14 +8,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-
 namespace FarmAdvisor.Controllers
 {
     [ApiController]
     [Route("users")]
     public class UsersController : ControllerBase
     {
-
         private readonly JwtAuthenticationController jwtAuthenticationController;
         private readonly UserDataAccess userDataAccess;
         public UsersController(JwtAuthenticationController jwtAuthenticationController)
@@ -23,7 +21,6 @@ namespace FarmAdvisor.Controllers
             this.jwtAuthenticationController = jwtAuthenticationController;
             this.userDataAccess = new UserDataAccess();
         }
-
         [HttpPost]
         [Route("signup")]
         public IActionResult signup([FromBody] UserSignup userSignup)
@@ -65,7 +62,6 @@ namespace FarmAdvisor.Controllers
                 return StatusCode(500);
             }
         }
-
         [HttpPost]
         [Route("signup/verify")]
         public IActionResult signupVerify([FromBody] UserSignupVerificationInput userSignupVerificationInput)
@@ -115,7 +111,6 @@ namespace FarmAdvisor.Controllers
                 return StatusCode(500);
             }
         }
-
         [HttpPost]
         [Route("login")]
         public IActionResult login([FromBody] UserLoginInput userLoginInput)
@@ -137,7 +132,6 @@ namespace FarmAdvisor.Controllers
                 return StatusCode(500);
             }
         }
-
         [Authorize]
         [HttpGet]
         [Route("me")]

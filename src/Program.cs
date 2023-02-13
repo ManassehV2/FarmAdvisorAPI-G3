@@ -2,16 +2,12 @@ using FarmAdvisor.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -28,21 +24,14 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false
     };
 });
-
 builder.Services.AddSingleton<JwtAuthenticationController>();
-
 var app = builder.Build();
-
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapGet("/", () => "All Good!");
-
 app.Run();

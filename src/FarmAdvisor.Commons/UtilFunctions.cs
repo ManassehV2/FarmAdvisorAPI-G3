@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-
 namespace FarmAdvisor.Commons;
 public static class Utils
 {
@@ -19,7 +18,6 @@ public static class Utils
     }
     public static bool isValidLongitude(double number)
     {
-        // LoadTester.test();
         return number >= -180 && number <= 180;
     }
     public static double getGdd(double tMin, double tMax, double tBase)
@@ -28,7 +26,7 @@ public static class Utils
     }
     public static double[] getIncPattern(List<double> list)
     {
-        int incPatternLength = list.Count -1;
+        int incPatternLength = list.Count - 1;
         double[] dt = new double[incPatternLength];
         int minus = (int)Math.Floor((double)incPatternLength / 2);
         int plus = (int)Math.Ceiling((double)incPatternLength / 2);

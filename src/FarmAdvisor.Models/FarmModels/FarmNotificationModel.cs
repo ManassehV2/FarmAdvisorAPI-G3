@@ -8,7 +8,6 @@ namespace FarmAdvisor.Models
             public static readonly string GddExceeded = "GddExceeded";
             
         };
-
         public Guid FieldId { get; set; }
         public string FieldName { get; set; } = null!;
         public Guid SensorId { get; set; }

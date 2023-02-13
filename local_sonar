@@ -1,4 +1,0 @@
-dotnet sonarscanner begin /k:"farm_advisor_local" /d:sonar.host.url="http://localhost:9000"  /d:sonar.login="sqp_be927db37c9c0ee95c083ac9b0bae9bec166f566"
-dotnet build build.proj  --no-incremental
-dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-dotnet sonarscanner end /d:sonar.login="sqp_be927db37c9c0ee95c083ac9b0bae9bec166f566"

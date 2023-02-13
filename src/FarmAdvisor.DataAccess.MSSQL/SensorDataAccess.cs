@@ -1,5 +1,4 @@
 using FarmAdvisor.Models;
-
 namespace FarmAdvisor.DataAccess.MSSQL
 {
     public class SensorDataAccess
@@ -9,38 +8,32 @@ namespace FarmAdvisor.DataAccess.MSSQL
         {
             _dbContext = new FarmAdvisorDbContext();
         }
-
         public Sensor add(Sensor sensor)
         {
             _dbContext.Add(sensor);
             _dbContext.SaveChanges();
             return sensor;
         }
-
         public Sensor? getById(Guid id)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SensorId == id);
             return sensors.FirstOrDefault();
         }
-
         public Sensor[] getByFieldId(Guid id)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.FieldId == id);
             return sensors.ToArray<Sensor>();
         }
-
         public Sensor? getByUserAndSensorId(Guid userId, Guid sensorId)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SensorId == sensorId).Where(sensor => sensor.UserId == userId);
             return sensors.FirstOrDefault();
         }
-
         public Sensor? getByUserIdAndSerialNo(Guid userId, string serialNo)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SerialNo == serialNo).Where(sensor => sensor.UserId == userId);
             return sensors.FirstOrDefault();
         }
-
         public Sensor? deleteByUserAndSensorId(Guid userId, Guid sensorId)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SensorId == sensorId).Where(sensor => sensor.UserId == userId);
@@ -51,7 +44,6 @@ namespace FarmAdvisor.DataAccess.MSSQL
             _dbContext.SaveChanges();
             return sensor;
         }
-
         public Sensor? updateByUserAndSensorId(Guid userId, Guid sensorId, SensorUpdate sensorUpdate)
         {
             var sensors = _dbContext.Sensors.Where(sensor => sensor.SensorId == sensorId).Where(sensor => sensor.UserId == userId);
