@@ -25,3 +25,7 @@ dotnet run
 ```
 
 -> visit https://localhost:7086/swagger/index.html to get the endpoints of the running REST API
+
+### Notes
+
+-> The SignUp end point does't send any Verification code to the phone provided, Use 12345 instead
