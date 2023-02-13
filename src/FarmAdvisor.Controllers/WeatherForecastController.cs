@@ -19,9 +19,9 @@ namespace FarmAdvisor.Controllers
             try
             {
                 if (!Utils.isValidLatitude(latitude))
-                    return Ok("Invalid_Latitude");
+                    return BadRequest("Invalid_Latitude");
                 if (!Utils.isValidLongitude(longitude))
-                    return Ok("Invalid_Longitude");
+                    return BadRequest("Invalid_Longitude");
                 if (altitude < -500)
                     altitude = -500;
                 if (altitude > 9000)
