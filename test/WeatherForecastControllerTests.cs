@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 namespace FarmAdvisor.Test
 {
   [TestClass]
-  public class WeatherApiTest
+  public class WeatherForecastControllerTests
   {
     private HttpClient _httpClient;
 
-    public WeatherApiTest()
+    public WeatherForecastControllerTests()
     {
       var webAppFactory = new WebApplicationFactory<Program>();
       _httpClient = webAppFactory.CreateDefaultClient();

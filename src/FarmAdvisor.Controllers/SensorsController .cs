@@ -29,16 +29,10 @@ namespace FarmAdvisor.Controllers
         {
             try
             {
-                bool hasValidLatitude = Utils.isValidLatitude(sensorInput.Lat);
-                if (!hasValidLatitude)
-                {
-                    return Ok("Invalid_Latitude");
-                }
-                bool hasValidLongitude = Utils.isValidLongitude(sensorInput.Long);
-                if (hasValidLongitude)
-                {
-                    return Ok("Invalid_Longitude");
-                }
+                if (!Utils.isValidLatitude(sensorInput.Lat))
+                    return BadRequest("Invalid_Latitude");
+                if (!Utils.isValidLongitude(sensorInput.Long))
+                    return BadRequest("Invalid_Longitude");
                 Guid? userId = jwtAuthenticationController.getCurrentUserId(HttpContext);
                 if (userId == null)
                 {
