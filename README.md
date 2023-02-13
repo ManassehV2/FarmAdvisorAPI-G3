@@ -12,6 +12,8 @@
 docker compose up
 ```
 
+-> wait for the above process to download and start running (wait about 5 minutes after it finishes the download)
+
 -> open another terminal in the root directory of the project and run the following 
 
 ```
@@ -21,3 +23,5 @@ dotnet ef migrations add CreateTables
 dotnet ef database update
 dotnet run
 ```
+
+-> visit https://localhost:7086/swagger/index.html to get the endpoints of the running REST API
