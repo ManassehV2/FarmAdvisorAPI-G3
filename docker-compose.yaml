@@ -1,15 +1,6 @@
 version: '3.1'
 
 services:
-  app:
-    container_name: farm_advisor
-    # image: estifanosn/farm-advisor
-    build: .
-    restart: always
-    ports:
-      - "5000:80"
-    depends_on:
-      - sql_server
   sql_server:
     container_name: sql_server
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -17,7 +8,7 @@ services:
     env_file:
       - .env
     ports:
-      - "1433:1433"
+      - "5500:1433"
     volumes:
       - db_mssql:/var/opt/mssql
 volumes:

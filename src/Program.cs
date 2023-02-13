@@ -2,8 +2,6 @@ using FarmAdvisor.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using FarmAdvisor.DataAccess.MSSQL;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,24 +43,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// FarmAdvisorDbContext farmAdvisorDbContext = new FarmAdvisorDbContext();
-// while (true)
-// {
-//     try
-//     {
-//         if (farmAdvisorDbContext.Database.GetPendingMigrations().Any())
-//         {
-//             Console.WriteLine("Populating db!");
-//             farmAdvisorDbContext.Database.Migrate();
-//             break;
-//         }
-//     }
-//     catch (Exception e)
-//     {
-//         Console.WriteLine(e);
-//         Console.WriteLine("Waiting the db...");
-//     }
-// }
+app.MapGet("/", () => "All Good!");
 
 app.Run();
