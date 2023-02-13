@@ -18,7 +18,7 @@ namespace FarmAdvisor.Test
         private static Guid? FarmId;
         private static Guid? FieldId;
         private static Guid? SensorId;
-        private static string phone = "0963100000";
+        private static string phone = "0963100002";
         public SensorsControllerTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
@@ -126,6 +126,94 @@ namespace FarmAdvisor.Test
             Assert.IsTrue(incomingSensor.SensorId is Guid);
 
             SensorsControllerTests.SensorId = incomingSensor.SensorId;
+        }
+
+        [TestMethod]
+        public async Task GetSensor_ReturnsValidSensor()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+            var sensorResponse = await _httpClient.GetAsync("/sensors/" + SensorsControllerTests.SensorId);
+
+            Assert.AreEqual(HttpStatusCode.OK, sensorResponse.StatusCode);
+            var stringResult = await sensorResponse.Content.ReadAsStringAsync();
+            Sensor sensor = JsonConvert.DeserializeObject<Sensor>(stringResult)!;
+            Assert.IsTrue(sensor.SensorId == SensorsControllerTests.SensorId);
+        }
+
+        [TestMethod]
+        public async Task PatchSensor_WithValidSensor_ReturnsNewSensor()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+            SensorUpdate sensorUpdate = new SensorUpdate()
+            {
+                Long = 80,
+                InstallationDate = "10-2-2021"
+            };
+
+            HttpContent sensorContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(sensorUpdate), Encoding.UTF8, "application/json");
+            var sensorUpdateResponse = await _httpClient.PatchAsync("/sensors/" + SensorsControllerTests.SensorId, sensorContent);
+
+            Assert.AreEqual(HttpStatusCode.OK, sensorUpdateResponse.StatusCode);
+            var stringResult = await sensorUpdateResponse.Content.ReadAsStringAsync();
+            Sensor sensor = JsonConvert.DeserializeObject<Sensor>(stringResult)!;
+            Assert.IsTrue(sensor.InstallationDate == sensorUpdate.InstallationDate);
+        }
+
+        [TestMethod]
+        public async Task GetSensorStatistics_ReturnsValidSensorStatistics()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+            var response = await _httpClient.GetAsync("/sensors/" + SensorsControllerTests.SensorId + "/statistics");
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            var stringResult = await response.Content.ReadAsStringAsync();
+            Sensor[] sensors = JsonConvert.DeserializeObject<Sensor[]>(stringResult)!;
+            Assert.IsTrue(sensors[0].SensorId == SensorsControllerTests.SensorId);
+        }
+
+        [TestMethod]
+        public async Task PostResetGdd_WithValidSensorGddResetInput_ReturnsSensorGddReset()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+            SensorGddResetInput sensorUpdate = new SensorGddResetInput()
+            {
+                resetDate = DateTime.UtcNow.Date
+            };
+
+            HttpContent sensorContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(sensorUpdate), Encoding.UTF8, "application/json");
+            var sensorUpdateResponse = await _httpClient.PostAsync("/sensors/" + SensorsControllerTests.SensorId + "/gdd-resets", sensorContent);
+
+            Assert.AreEqual(HttpStatusCode.OK, sensorUpdateResponse.StatusCode);
+            var stringResult = await sensorUpdateResponse.Content.ReadAsStringAsync();
+            SensorGddReset sensor = JsonConvert.DeserializeObject<SensorGddReset>(stringResult)!;
+            Assert.IsTrue(sensor.SensorId == SensorsControllerTests.SensorId);
+        }
+
+
+        [TestMethod]
+        public async Task GetSensorResets_ReturnsValidSensorResets()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+            var response = await _httpClient.GetAsync("/sensors/" + SensorsControllerTests.SensorId + "/gdd-resets");
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            var stringResult = await response.Content.ReadAsStringAsync();
+            SensorGddReset[] sensor = JsonConvert.DeserializeObject<SensorGddReset[]>(stringResult)!;
+            Assert.IsTrue(sensor[0].SensorId == SensorsControllerTests.SensorId);
+        }
+
+        [TestMethod]
+        public async Task PostTrigger_ReturnsSensor()
+        {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + SensorsControllerTests.accessToken);
+
+            HttpContent sensorContent = new StringContent("{}", Encoding.UTF8, "application/json");
+            var sensorUpdateResponse = await _httpClient.PostAsync("/sensors/" + SensorsControllerTests.SensorId + "/trigger", sensorContent);
+
+            Assert.AreEqual(HttpStatusCode.OK, sensorUpdateResponse.StatusCode);
+            var stringResult = await sensorUpdateResponse.Content.ReadAsStringAsync();
+            SensorGddReset sensor = JsonConvert.DeserializeObject<SensorGddReset>(stringResult)!;
+            Assert.IsTrue(sensor.SensorId == SensorsControllerTests.SensorId);
         }
     }
 }
