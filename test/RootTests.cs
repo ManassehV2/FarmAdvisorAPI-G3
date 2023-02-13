@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 namespace FarmAdvisor.Test
 {
     [TestClass]
-    public class DefaultTests
+    public class RootTests
     {
         private HttpClient _httpClient;
 
-        public DefaultTests()
+        public RootTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             _httpClient = webAppFactory.CreateDefaultClient();
