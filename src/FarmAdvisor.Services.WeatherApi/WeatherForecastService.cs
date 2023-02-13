@@ -18,39 +18,39 @@ namespace FarmAdvisor.Services.WeatherApi
                     {
                         public class TimeSeriesMemberDataInstantDetails
                         {
-                            public double air_pressure_at_sea_level;
-                            public double air_temperature;
-                            public double cloud_area_fraction;
-                            public double relative_humidity;
-                            public double wind_from_direction;
-                            public double wind_speed;
+                            public double air_pressure_at_sea_level { get; set; }
+                            public double air_temperature { get; set; }
+                            public double cloud_area_fraction { get; set; }
+                            public double relative_humidity { get; set; }
+                            public double wind_from_direction { get; set; }
+                            public double wind_speed { get; set; }
                         }
-                        public TimeSeriesMemberDataInstantDetails details = null!;
+                        public TimeSeriesMemberDataInstantDetails details { get; set; } = null!;
                     }
                     public class NextHours
                     {
                         public class NextHoursSummary
                         {
-                            public string symbol_code = null!;
+                            public string symbol_code { get; set; } = null!;
                         }
                         public class NextHoursDetails
                         {
-                            public double precipitation_amount;
+                            public double precipitation_amount { get; set; }
                         }
-                        public NextHoursSummary summary = null!;
-                        public NextHoursDetails? details;
+                        public NextHoursSummary summary { get; set; } = null!;
+                        public NextHoursDetails? details { get; set; }
                     }
-                    public TimeSeriesMemberDataInstant instant = null!;
-                    public NextHours? next_12_hours;
-                    public NextHours? next_1_hours;
-                    public NextHours? next_6_hours;
+                    public TimeSeriesMemberDataInstant instant { get; set; } = null!;
+                    public NextHours? next_12_hours { get; set; }
+                    public NextHours? next_1_hours { get; set; }
+                    public NextHours? next_6_hours { get; set; }
                 }
-                public string time = null!;
-                public TimeSeriesMemberData data = null!;
+                public string time { get; set; } = null!;
+                public TimeSeriesMemberData data { get; set; } = null!;
             }
-            public TimeSeriesMember[] timeseries = null!;
+            public TimeSeriesMember[] timeseries { get; set; } = null!;
         }
-        public Properties properties = null!;
+        public Properties properties { get; set; } = null!;
     }
     public class WeatherForecastService
     {
@@ -60,7 +60,7 @@ namespace FarmAdvisor.Services.WeatherApi
 
             client.DefaultRequestHeaders.Add("User-Agent", "C# program");
         }
-        public async Task<List<OneDayWeatherForecast>> getForecastAsync(int altitude, double latitude, double longitude, double baseTemperature)
+        public async Task<List<OneDayWeatherForecast>> getForecastAsync(int altitude, double latitude, double longitude, double baseTemperature, double currentGdd)
         {
             string forecastApiResponseJson = await client.GetStringAsync(" https://api.met.no/weatherapi/locationforecast/2.0/compact?altitude=" + altitude + "&lat=" + latitude + "&lon=" + longitude);
             ForecastApiResponse forecastApiResponse = JsonConvert.DeserializeObject<ForecastApiResponse>(forecastApiResponseJson)!;
@@ -69,6 +69,7 @@ namespace FarmAdvisor.Services.WeatherApi
             int index = 0;
             double temperatureSum = 0;
             double precipitationSum = 0;
+            double gdd = currentGdd;
             double tMin = forecastApiResponse.properties.timeseries[0].data.instant.details.air_temperature;
             double tMax = tMin;
             int timesCount = 0;
@@ -78,12 +79,15 @@ namespace FarmAdvisor.Services.WeatherApi
                 double thisTemperature = timeSeriesMember.data.instant.details.air_temperature;
                 if (thisDate != lastDate)
                 {
+                    double thisGdd = Utils.getGdd(tMin, tMax, baseTemperature);
+                    if (thisGdd > 0)
+                        gdd += thisGdd;
                     forecasts.Add(new OneDayWeatherForecast()
                     {
                         Date = lastDate,
                         averageTemperature = temperatureSum / timesCount,
                         averagePrecipitation = precipitationSum / timesCount,
-                        GDD = Utils.getGdd(tMin, tMax, baseTemperature)
+                        GDD = gdd
                     });
                     index++;
                     if (index == 8)
@@ -100,7 +104,10 @@ namespace FarmAdvisor.Services.WeatherApi
                 {
                     precipitationSum += timeSeriesMember.data.next_6_hours!.details!.precipitation_amount;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    // This error can be ignored
+                }
                 timesCount++;
                 if (thisTemperature < tMin)
                     tMin = thisTemperature;
