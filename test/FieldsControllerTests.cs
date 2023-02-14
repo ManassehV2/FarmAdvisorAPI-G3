@@ -16,7 +16,7 @@ namespace FarmAdvisor.Test
         private static string accessToken = "";
         private static Guid? FarmId;
         private static Guid? FieldId;
-        private static string phone = "0963400001";
+        private static string phone = "0963400003";
         public FieldsControllerTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();

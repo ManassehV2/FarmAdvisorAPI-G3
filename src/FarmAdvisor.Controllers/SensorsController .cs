@@ -21,6 +21,24 @@ namespace FarmAdvisor.Controllers
         {
             this.jwtAuthenticationController = jwtAuthenticationController;
         }
+        public class Result
+        {
+            public bool valid { get; set; } = false;
+            public DateTime cuttingDate { get; set; }
+
+        }
+        public Result check(bool cuttingDateSet, double forecastGDD, double defaultGDD, double lastGdd, DateTime date)
+        {
+            Result result = new Result();
+            if (!cuttingDateSet && forecastGDD > defaultGDD)
+            {
+                result.valid = true;
+                double downDt = defaultGDD - lastGdd;
+                double upDt = forecastGDD - defaultGDD;
+                result.cuttingDate = downDt > upDt ? date : date.AddDays(-1);
+            }
+            return result;
+        }
         [HttpPost]
         public async Task<IActionResult> postSensorAsync([FromBody] SensorInput sensorInput)
         {
@@ -64,11 +82,10 @@ namespace FarmAdvisor.Controllers
                     averageTemperature = forecast.averageTemperature,
                     GDD = forecast.GDD
                 });
-                if (!cuttingDateSet && forecast.GDD > defaultGDD)
+                Result result = check(cuttingDateSet, forecast.GDD, defaultGDD, lastGdd, date);
+                if (result.valid)
                 {
-                    double downDt = defaultGDD - lastGdd;
-                    double upDt = forecast.GDD - defaultGDD;
-                    sensor.cuttingDate = downDt > upDt ? date : date.AddDays(-1);
+                    sensor.cuttingDate = result.cuttingDate;
                     cuttingDateSet = true;
                 }
                 lastGdd = forecast.GDD;

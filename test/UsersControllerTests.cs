@@ -14,7 +14,7 @@ namespace FarmAdvisor.Test
         private HttpClient _httpClient;
         private static string userSignupVerificationToken = "";
         private static string accessToken = "";
-        private static string phone = "0963200000";
+        private static string phone = "0963200002";
         public UsersControllerTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();

@@ -15,7 +15,7 @@ namespace FarmAdvisor.Test
         private HttpClient _httpClient;
         private static string accessToken = "";
         private static Guid? FarmId;
-        private static string phone = "0963000002";
+        private static string phone = "0963000004";
         public FarmsControllerTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
